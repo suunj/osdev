@@ -1,7 +1,16 @@
-ORG 0x7c00          ; BIOS가 부트섹터를 메모리 0x7C00에 로드
+ORG 0               ; 세그먼트=0x7C0, 오프셋=0, 0x7C0×16 + 0 = 0x7C00
 BITS 16             ; 16비트 리얼모드
 
 start:
+    cli             ; 인터럽트 비활성화 (설정 중 방해받지 않게)
+    mov ax, 0x7c0
+    mov ds, ax      ; DS = 0x7C0 (데이터 세그먼트)
+    mov es, ax      ; ES = 0x7C0 (추가 세그먼트)
+    mov ax, 0x00
+    mov ss, ax      ; SS = 0x00 (스택 세그먼트)
+    mov sp, 0x7c00  ; SP = 0x7C00 (스택 포인터)
+    sti             ; 인터럽트 다시 활성화
+
     mov si, message ; SI 레지스터에 message 문자열의 주소를 저장
     call print
     jmp $           ; 현재 위치로 무한 점프 (무한 루프)
